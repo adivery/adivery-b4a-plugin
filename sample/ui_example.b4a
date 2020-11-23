@@ -3,14 +3,14 @@ File1=main.bal
 FileGroup1=Default Group
 Group=Default Group
 Library1=core
-Library2=adivery
-Library3=firebaseadmob
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="28"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.DarkTheme)~\n~'End of default text.~\n~AddApplicationText(~\n~  <activity~\n~  android:name="com.google.android.gms.ads.AdActivity"~\n~  android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"~\n~  android:theme="@android:style/Theme.Translucent" />~\n~  <activity android:name="com.google.android.gms.ads.purchase.InAppPurchaseActivity"~\n~  android:theme="@style/Theme.IAPTheme"/>~\n~    <provider~\n~            android:name="com.google.android.gms.ads.MobileAdsInitProvider"~\n~            android:authorities="${applicationId}.mobileadsinitprovider"~\n~            android:exported="false"~\n~            android:initOrder="100" />~\n~   <meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />)~\n~CreateResourceFromFile(Macro, Adivery.AdiveryV8)~\n~
+Library2=firebaseadmob
+Library3=adivery
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="30"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.DarkTheme)~\n~'End of default text.~\n~~\n~'Adivery Ad activity~\n~AddApplicationText(~\n~<activity~\n~    android:name="com.adivery.sdk.networks.adivery.AdActivity"~\n~    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"~\n~    android:exported="false" />)~\n~~\n~'Adivery AdMob config~\n~AddApplicationText(~\n~<meta-data android:name="com.google.android.gms.ads.AD_MANAGER_APP" android:value="true" />~\n~<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />~\n~<activity~\n~    android:name="com.google.android.gms.ads.AdActivity"~\n~    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"~\n~    android:theme="@android:style/Theme.Translucent" />)~\n~
 Module1=Starter
 NumberOfFiles=1
 NumberOfLibraries=3
 NumberOfModules=1
-Version=9.9
+Version=10.2
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: B4A Example
@@ -29,13 +29,12 @@ Version=9.9
 Sub Process_Globals
 	'These global variables will be declared once when the application starts.
 	'These variables can be accessed from all modules.
-
 End Sub
 
 Sub Globals
 	'These global variables will be redeclared each time the activity is created.
 	'These variables can only be accessed from this module.
-	Dim adivery As Adievry
+	Dim adivery As Adivery
 	Dim banner As AdiveryBannerAd
 	Dim rewarded As AdiveryRewardedAd
 	Dim interstitial As AdiveryInterstitialAd
@@ -44,20 +43,14 @@ End Sub
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("main")
-	adivery.initialize("7e27fb38-5aff-473a-998f-437b89426f66")
-	adivery.setLoggingEnabled(True)
-	rewarded.isLoaded
+	adivery.Initialize("7e27fb38-5aff-473a-998f-437b89426f66")
+	adivery.SetLoggingEnabled(True)
 	
 End Sub
 
 Sub ButtonInterstitial_Click
-	interstitial.initialize2("beforestart","de5db046-765d-478f-bb2e-30dc2eaf3f51")
+	interstitial.Initialize2("beforestart", "de5db046-765d-478f-bb2e-30dc2eaf3f51")
 	Log("interstitial called")
-End Sub
-
-Sub BeforeStart_AdLoaded
-	Log("interstitial ad loaded")
-	interstitial.showAd()
 End Sub
 
 Sub Activity_Resume
@@ -70,22 +63,34 @@ Sub Activity_Pause (UserClosed As Boolean)
 End Sub
 
 Sub ButtonBanner_Click
-	banner.initialize2("mainbanner","2f71ec44-f30a-4043-9cc1-f32347a07f8b","banner")
+	banner.Initialize2("mainbanner", "2f71ec44-f30a-4043-9cc1-f32347a07f8b", banner.BANNER)
 	
-	Dim height As Int
-	If GetDeviceLayoutValues.ApproximateScreenSize < 6 Then
-		'phones
-		If 100%x > 100%y Then height = 32dip Else height = 50dip
-	Else
-		'tablets
-		height = 90dip
-	End If
-	Activity.AddView(banner, 0dip, 100%y - height, 100%x, height)
+	Dim Width, Height, Left, Top As Int
+
+	Width = 320dip
+	Height = 50dip
+	Top = 100%y - Height
+	Left = (100%x - Width) / 2
+	
+	Activity.AddView(banner, Left, Top, Width, Height)
+	
 	Log("Banner called")
 End Sub
 
+Sub ButtonFlex_Click
+	banner.Initialize2("flexbanner", "46a57d90-dc31-4995-9cad-defc8dcd776e", banner.FLEX_BANNER)
+	
+	Activity.AddView(banner, 0, 100%y - 50dip, 100%x, 50dip)
+	
+	Log("flex banner initialized")
+End Sub
+
+Sub FlexBanner_AdLoadFailed
+	Log("flex banner load failed")
+End Sub
+
 Sub ButtonRewarded_Click
-	rewarded.initialize2("afterload","3f97dc4d-3e09-4024-acaf-931862c03ba8")
+	rewarded.Initialize2("afterload", "3f97dc4d-3e09-4024-acaf-931862c03ba8")
 	Log("rewarded called")
 End Sub
 
@@ -118,14 +123,9 @@ Sub AfterLoad_AdShown
 	Log("reward ad shown")
 End Sub
 
-Sub ButtonInterstitial_Click
-	interstitial.initialize2("beforestart","de5db046-765d-478f-bb2e-30dc2eaf3f51")
-	Log("interstitial called")
-End Sub
-
 Sub BeforeStart_AdLoaded
 	Log("interstitial ad loaded")
-	interstitial.showAd()
+	interstitial.ShowAd()
 End Sub
 
 Sub BeforeStart_AdClicked

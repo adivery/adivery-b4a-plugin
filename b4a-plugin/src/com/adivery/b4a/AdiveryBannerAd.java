@@ -1,67 +1,54 @@
 package com.adivery.b4a;
 
+import android.util.Log;
+import android.view.View;
+import android.widget.FrameLayout;
+import anywheresoftware.b4a.BA;
+import anywheresoftware.b4a.BA.*;
 import com.adivery.sdk.Adivery;
 import com.adivery.sdk.AdiveryBannerCallback;
 import com.adivery.sdk.BannerType;
 
-import android.util.Log;
-import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import android.view.View;
-import anywheresoftware.b4a.BA;
-import anywheresoftware.b4a.objects.ViewWrapper;
-import anywheresoftware.b4a.BA.ActivityObject;
-import anywheresoftware.b4a.BA.Events;
-import anywheresoftware.b4a.BA.ShortName;
-
 @ShortName("AdiveryBannerAd")
+@Events(values = { "AdLoaded", "AdClicked", "AdLoadFailed", "AdShowFailed" })
 @ActivityObject
-@Events(values = {
-		"AdLoaded",
-		"AdClicked",
-		"AdLoadFailed",
-		"AdShowFailed"
-})
-// Event names in annotations must be CamelCase and event names in raise methods must be lower case
-public class AdiveryBannerAd extends ViewWrapper<ViewGroup> {
-	
-	public void initialize2(BA ba,String EventName,String placementId,String bannerType) {
-		ViewGroup vg = new FrameLayout(ba.context);
-		setObject(vg);
-		Initialize(ba, EventName);
-		final String eventName = EventName.toLowerCase(BA.cul);
-		Adivery.requestBannerAd(ba.activity, placementId, getBannerType(bannerType), new AdiveryBannerCallback() {
-			@Override
-			public void onAdLoaded(View adView) {
-				Log.d("Adivery","banner loaded");
-				vg.addView(adView);
-				ba.raiseEventFromDifferentThread(AdiveryBannerAd.this.getObject(), null, 0, String.valueOf(eventName) + "_adloaded", false, null);
-			}
-			
-			@Override
-			public void onAdClicked() {
-				ba.raiseEventFromDifferentThread(AdiveryBannerAd.this.getObject(), null, 0, String.valueOf(eventName) + "_adclicked", false, null);
-			}
-			
-			@Override
-			public void onAdLoadFailed(int errorCode) {
-				ba.raiseEventFromDifferentThread(AdiveryBannerAd.this.getObject(), null, 0, String.valueOf(eventName) + "_adloadfailed", false, null);
-			}
-			
-			@Override
-			public void onAdShowFailed(int errorCode) {
-				ba.raiseEventFromDifferentThread(AdiveryBannerAd.this.getObject(), null, 0, String.valueOf(eventName) + "_adshowfailed", false, null);
-			}
-		});
-	}
-	
-	private static BannerType getBannerType(String type) {
-		if(type.equalsIgnoreCase("banner")) {
-			return BannerType.BANNER;
-		} else if(type.equalsIgnoreCase("large_banner")) {
-			return BannerType.LARGE_BANNER;
-		} else {
-			return BannerType.MEDIUM_RECTANGLE;
-		}
-	}
+public class AdiveryBannerAd extends AdiveryViewWrapper {
+
+  public static Object BANNER = BannerType.BANNER;
+  public static Object LARGE_BANNER = BannerType.LARGE_BANNER;
+  public static Object MEDIUM_RECTANGLE = BannerType.MEDIUM_RECTANGLE;
+  public static Object FLEX_BANNER = BannerType.FLEX_BANNER;
+
+  public void Initialize2(final BA ba, String rawPrefix, String placementId, Object bannerType) {
+    final FrameLayout container = new FrameLayout(ba.context);
+    initAd(ba, rawPrefix, container);
+
+    Adivery.requestBannerAd(
+      ba.context,
+      placementId,
+      (BannerType) bannerType,
+      new AdiveryBannerCallback() {
+        @Override
+        public void onAdLoaded(View adView) {
+          container.addView(adView);
+          raiseEvent(ba, "adloaded");
+        }
+
+        @Override
+        public void onAdClicked() {
+          raiseEvent(ba, "adclicked");
+        }
+
+        @Override
+        public void onAdLoadFailed(int errorCode) {
+          raiseEvent(ba, "adloadfailed");
+        }
+
+        @Override
+        public void onAdShowFailed(int errorCode) {
+          raiseEvent(ba, "adshowfailed");
+        }
+      }
+    );
+  }
 }

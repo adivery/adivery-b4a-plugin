@@ -1,9 +1,0 @@
-AddPermission(android.permission.INTERNET)
-
-AddApplicationText(<activity
-      android:name="com.adivery.sdk.networks.adivery.AdActivity"
-      android:configChanges="orientation|screenSize" />)
-
-AddApplicationText(<meta-data
-      android:name="com.google.android.gms.ads.AD_MANAGER_APP"
-      android:value="true" />)

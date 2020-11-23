@@ -1,0 +1,1 @@
+LibraryCompiler Adivery C:\Users\admin\workspace\adivery-b4a-plugin\b4a-plugin
