@@ -7,6 +7,9 @@
 # BlueJ files
 *.ctxt
 
+# eclipse settings
+*.prefs
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
@@ -29,3 +32,4 @@ Objects/
 *.jar
 *.ipa
 *.meta
+/bin/
