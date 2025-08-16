@@ -3,14 +3,13 @@ File1=main.bal
 FileGroup1=Default Group
 Group=Default Group
 Library1=core
-Library2=firebaseadmob
-Library3=adivery
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="30"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.DarkTheme)~\n~'End of default text.~\n~~\n~'Adivery Ad activity~\n~AddApplicationText(~\n~<activity~\n~    android:name="com.adivery.sdk.networks.adivery.AdActivity"~\n~    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"~\n~    android:exported="false" />)~\n~~\n~'Adivery AdMob config~\n~AddApplicationText(~\n~<meta-data android:name="com.google.android.gms.ads.AD_MANAGER_APP" android:value="true" />~\n~<meta-data android:name="com.google.android.gms.version" android:value="@integer/google_play_services_version" />~\n~<activity~\n~    android:name="com.google.android.gms.ads.AdActivity"~\n~    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"~\n~    android:theme="@android:style/Theme.Translucent" />)~\n~
+Library2=adivery
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="5" android:targetSdkVersion="34"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.DarkTheme)~\n~'End of default text.~\n~~\n~'Adivery Ad activity~\n~AddApplicationText(~\n~<activity~\n~    android:name="com.adivery.sdk.networks.adivery.AdActivity"~\n~    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"~\n~    android:exported="false" />)~\n~~\n~'Adivery AdMob config~\n~AddApplicationText(~\n~<meta-data android:name="com.google.android.gms.ads.AD_MANAGER_APP" android:value="true" />~\n~~\n~<activity~\n~    android:name="com.google.android.gms.ads.AdActivity"~\n~    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"~\n~    android:theme="@android:style/Theme.Translucent" />)~\n~
 Module1=Starter
 NumberOfFiles=1
-NumberOfLibraries=3
+NumberOfLibraries=2
 NumberOfModules=1
-Version=10.2
+Version=13.4
 @EndOfDesignText@
 #Region  Project Attributes 
 	#ApplicationLabel: B4A Example
@@ -19,11 +18,14 @@ Version=10.2
 	'SupportedOrientations possible values: unspecified, landscape or portrait.
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
+	 #AdditionalJar: kotlin-stdlib-2.1.10
+	 #SignKeyAlgorithm: -digestalg SHA1 -sigalg SHA384withRSA
 #End Region
 
 #Region  Activity Attributes 
 	#FullScreen: False
 	#IncludeTitle: True
+	#AdditionalJar: kotlin-stdlib-2.1.10
 #End Region
 
 Sub Process_Globals
@@ -36,21 +38,16 @@ Sub Globals
 	'These variables can only be accessed from this module.
 	Dim adivery As Adivery
 	Dim banner As AdiveryBannerAd
-	Dim rewarded As AdiveryRewardedAd
-	Dim interstitial As AdiveryInterstitialAd
+
 End Sub
 
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("main")
 	adivery.Initialize("7e27fb38-5aff-473a-998f-437b89426f66")
+	adivery.AddListener(Me)
 	adivery.SetLoggingEnabled(True)
 	
-End Sub
-
-Sub ButtonInterstitial_Click
-	interstitial.Initialize2("beforestart", "de5db046-765d-478f-bb2e-30dc2eaf3f51")
-	Log("interstitial called")
 End Sub
 
 Sub Activity_Resume
@@ -63,6 +60,7 @@ Sub Activity_Pause (UserClosed As Boolean)
 End Sub
 
 Sub ButtonBanner_Click
+
 	banner.Initialize2("mainbanner", "2f71ec44-f30a-4043-9cc1-f32347a07f8b", banner.BANNER)
 	
 	Dim Width, Height, Left, Top As Int
@@ -77,11 +75,9 @@ Sub ButtonBanner_Click
 	Log("Banner called")
 End Sub
 
-Sub ButtonFlex_Click
-	banner.Initialize2("flexbanner", "46a57d90-dc31-4995-9cad-defc8dcd776e", banner.FLEX_BANNER)
-	
-	Activity.AddView(banner, 0, 100%y - 50dip, 100%x, 50dip)
-	
+Sub ButtonSmart_Click
+	banner.Initialize2("smartbanner", "46a57d90-dc31-4995-9cad-defc8dcd776e", banner.SMART_BANNER)
+	Activity.AddView(banner, 0, 100%y - 100dip, 100%x, 100dip)
 	Log("flex banner initialized")
 End Sub
 
@@ -89,63 +85,32 @@ Sub FlexBanner_AdLoadFailed
 	Log("flex banner load failed")
 End Sub
 
+Sub ButtonInterstitial_Click
+	adivery.PrepareInterstitialAd("de5db046-765d-478f-bb2e-30dc2eaf3f51")
+	Log("interstitial called")
+End Sub
+
+Sub ButtonInterstitialShow_Click
+	adivery.Show("de5db046-765d-478f-bb2e-30dc2eaf3f51")
+	Log("interstitial called")
+End Sub
+
 Sub ButtonRewarded_Click
-	rewarded.Initialize2("afterload", "3f97dc4d-3e09-4024-acaf-931862c03ba8")
+	adivery.PrepareRewardedAd("3f97dc4d-3e09-4024-acaf-931862c03ba8")
 	Log("rewarded called")
 End Sub
 
-Sub AfterLoad_AdLoaded
-	rewarded.showAd()
-	Log("reward ad loaded")
+Sub ButtonRewardedShow_Click
+	adivery.Show("3f97dc4d-3e09-4024-acaf-931862c03ba8")
+	Log("rewarded called")
 End Sub
 
-Sub AfterLoad_AdClicked
-	Log("reward ad clicked")
+Sub ButtonAppOpen_Click
+	adivery.PrepareAppOpenAd("9e9dd375-a1fe-4c2b-8432-b5bf8a5095f6")
 End Sub
 
-Sub AfterLoad_AdRewarded
-	Log("reward ad rewarded")
-End Sub
-
-Sub AfterLoad_AdLoadFailed
-	Log("reward ad load failed")
-End Sub
-
-Sub AfterLoad_AdShowFailed
-	Log("reward ad show failed")
-End Sub
-
-Sub AfterLoad_AdClosed
-	Log("reward ad closed")
-End Sub
-
-Sub AfterLoad_AdShown
-	Log("reward ad shown")
-End Sub
-
-Sub BeforeStart_AdLoaded
-	Log("interstitial ad loaded")
-	interstitial.ShowAd()
-End Sub
-
-Sub BeforeStart_AdClicked
-	Log("interstitial ad clicked")
-End Sub
-
-Sub BeforeStart_AdLoadFailed
-	Log("interstitial ad load failed")
-End Sub
-
-Sub BeforeStart_AdShowFailed
-	Log("interstitial ad show failed")
-End Sub
-
-Sub BeforeStart_AdClosed
-	Log("interstitial ad closed")
-End Sub
-
-Sub BeforeStart_AdShown
-	Log("interstitial ad shown")
+Sub ButtonAppOpenShow_Click
+	adivery.Show("9e9dd375-a1fe-4c2b-8432-b5bf8a5095f6")
 End Sub
 
 Sub MainBanner_AdLoaded
@@ -162,4 +127,40 @@ End Sub
 
 Sub MainBanner_AdShowFailed
 	Log("banner ad show failed")
+End Sub
+
+Sub On_Error(placement As String, error As String)
+	Log("Error: " & error)
+End Sub
+
+Sub On_Interstitial_Ad_Clicked(placement As String)
+	Log("Interstitial Ad Clicked: " & placement)
+End Sub
+
+Sub On_Interstitial_Ad_Closed(placement As String)
+	Log("Interstitial Ad Closed: " & placement)
+End Sub
+
+Sub On_Interstitial_Ad_Loaded(placement As String)
+	Log("Interstitial Ad Loaded: " & placement)
+End Sub
+
+Sub On_Interstitial_Ad_Shown(placement As String)
+	Log("Interstitial Ad Shown: " & placement)
+End Sub
+
+Sub On_Rewarded_Ad_Clicked(placement As String)
+	Log("Rewarded Ad Clicked: " & placement)
+End Sub
+
+Sub On_Rewarded_Ad_Closed(placement As String, reward As Boolean)
+	Log("Rewarded Ad Closed: " & placement & ", Reward: " & reward)
+End Sub
+
+Sub On_Rewarded_Ad_Loaded(placement As String)
+	Log("Rewarded Ad Loaded: " & placement)
+End Sub
+
+Sub On_Rewarded_Ad_Shown(placement As String)
+	Log("Rewarded Ad Shown: " & placement)
 End Sub
