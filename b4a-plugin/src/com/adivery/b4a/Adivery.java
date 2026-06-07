@@ -6,7 +6,7 @@ import anywheresoftware.b4a.BA;
 import anywheresoftware.b4a.BA.*;
 
 @ShortName("Adivery")
-@Version(4.0f)
+@Version(4.8f)
 @Permissions(values = { "android.permission.INTERNET" })
 @DependsOn(values = { "Adivery.aar" })
 @Events(values = {
