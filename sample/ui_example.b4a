@@ -19,6 +19,9 @@ Version=13.5
 	#SupportedOrientations: unspecified
 	#CanInstallToExternalStorage: False
 	 #AdditionalJar: kotlin-stdlib-2.1.10
+	 #AdditionalJar: okhttp-4.12.0
+	 #AdditionalJar: okio-jvm-3.6.0
+	 #AdditionalJar: sentry-8.7.0
 	 #SignKeyAlgorithm: -digestalg SHA1 -sigalg SHA384withRSA
 	#MultiDex: False
 #End Region
@@ -27,6 +30,9 @@ Version=13.5
 	#FullScreen: False
 	#IncludeTitle: True
 	#AdditionalJar: kotlin-stdlib-2.1.10
+	#AdditionalJar: okhttp-4.12.0
+	#AdditionalJar: okio-jvm-3.6.0
+	#AdditionalJar: sentry-8.7.0
 #End Region
 
 Sub Process_Globals
