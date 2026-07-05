@@ -25,6 +25,12 @@ Sub Service_Start (StartingIntent As Intent)
 	Service.StopAutomaticForeground 'Starter service can start in the foreground state in some edge cases.
 End Sub
 
+'Required when foregroundServiceType is set to "shortService" (targetSdkVersion 34+).
+'The OS calls this if the service is still in the foreground state ~3 minutes after being started.
+Sub Service_Timeout (Params As Map)
+	Service.StopForeground(51042) 'id of B4A's automatic foreground notification
+End Sub
+
 Sub Service_TaskRemoved
 	'This event will be raised when the user removes the app from the recent apps list.
 End Sub
