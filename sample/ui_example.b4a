@@ -117,7 +117,19 @@ Sub ButtonAppOpen_Click
 End Sub
 
 Sub ButtonAppOpenShow_Click
-	adivery.Show("9e9dd375-a1fe-4c2b-8432-b5bf8a5095f6")
+	adivery.ShowAppOpenAd("9e9dd375-a1fe-4c2b-8432-b5bf8a5095f6")
+End Sub
+
+'NOTE: no "ButtonOfferWall"/"ButtonOfferWallShow" exist yet in this layout (main.bal,
+'a binary Designer file that can't be hand-edited safely). Add them via the B4A visual
+'Designer - the Subs below will bind automatically once buttons with matching names exist.
+Sub ButtonOfferWall_Click
+	adivery.PrepareOfferWallAd("c11a9d90-043a-4a44-a6a8-f35e414bf675")
+	Log("offerwall called")
+End Sub
+
+Sub ButtonOfferWallShow_Click
+	adivery.Show("c11a9d90-043a-4a44-a6a8-f35e414bf675")
 End Sub
 
 Sub MainBanner_AdLoaded
@@ -170,4 +182,40 @@ End Sub
 
 Sub On_Rewarded_Ad_Shown(placement As String)
 	Log("Rewarded Ad Shown: " & placement)
+End Sub
+
+Sub On_App_Open_Ad_Clicked(placement As String)
+	Log("App Open Ad Clicked: " & placement)
+End Sub
+
+Sub On_App_Open_Ad_Closed(placement As String)
+	Log("App Open Ad Closed: " & placement)
+End Sub
+
+Sub On_App_Open_Ad_Loaded(placement As String)
+	Log("App Open Ad Loaded: " & placement)
+End Sub
+
+Sub On_App_Open_Ad_Shown(placement As String)
+	Log("App Open Ad Shown: " & placement)
+End Sub
+
+Sub On_Offer_Wall_Ad_Clicked(placement As String)
+	Log("Offer Wall Ad Clicked: " & placement)
+End Sub
+
+Sub On_Offer_Wall_Ad_Closed(placement As String)
+	Log("Offer Wall Ad Closed: " & placement)
+End Sub
+
+Sub On_Offer_Wall_Ad_Loaded(placement As String)
+	Log("Offer Wall Ad Loaded: " & placement)
+End Sub
+
+Sub On_Offer_Wall_Ad_Shown(placement As String)
+	Log("Offer Wall Ad Shown: " & placement)
+End Sub
+
+Sub On_Offer_Wall_Mission_Rewarded(placement As String, currency As String, amount As Int)
+	Log("Offer Wall Mission Rewarded: " & placement & ", " & amount & " " & currency)
 End Sub
