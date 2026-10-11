@@ -20,11 +20,15 @@ public abstract class AdiveryViewWrapper extends ViewWrapper<View> {
 
   @Hide
   void raiseEvent(BA ba, String name) {
-    ba.raiseEventFromDifferentThread(getObject(), null, 0, prefix + "_" + name, false, null);
+    if (ba.subExists(prefix + "_" + name)) {
+      ba.raiseEventFromDifferentThread(getObject(), null, 0, prefix + "_" + name, false, null);
+    }
   }
-  
+
   @Hide
   void raiseEvent(BA ba, String name, Object... param) {
-	ba.raiseEventFromDifferentThread(getObject(), null, 0, prefix  + "_" + name, false, param);
+    if (ba.subExists(prefix + "_" + name)) {
+      ba.raiseEventFromDifferentThread(getObject(), null, 0, prefix + "_" + name, false, param);
+    }
   }
 }
