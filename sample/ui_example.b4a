@@ -22,6 +22,8 @@ Version=13.5
 	 #AdditionalJar: okhttp-4.12.0
 	 #AdditionalJar: okio-jvm-3.6.0
 	 #AdditionalJar: sentry-8.7.0
+	 #AdditionalJar: kotlinx-coroutines-core-jvm-1.10.1
+	 #AdditionalJar: kotlinx-coroutines-android-1.10.1
 	 #SignKeyAlgorithm: -digestalg SHA1 -sigalg SHA384withRSA
 	#MultiDex: False
 #End Region
@@ -33,6 +35,8 @@ Version=13.5
 	#AdditionalJar: okhttp-4.12.0
 	#AdditionalJar: okio-jvm-3.6.0
 	#AdditionalJar: sentry-8.7.0
+	#AdditionalJar: kotlinx-coroutines-core-jvm-1.10.1
+	#AdditionalJar: kotlinx-coroutines-android-1.10.1
 #End Region
 
 Sub Process_Globals
