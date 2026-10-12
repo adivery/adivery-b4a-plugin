@@ -9,7 +9,9 @@ import anywheresoftware.b4a.BA.*;
 
 @ShortName("Adivery")
 @Version(4.91f)
-@Permissions(values = { "android.permission.INTERNET" })
+// B4A doesn't merge the SDK's manifest: without AD_ID, Android 13+ hands the SDK an all-zero advertising ID.
+@Permissions(values = { "android.permission.INTERNET", "android.permission.ACCESS_NETWORK_STATE",
+		"com.google.android.gms.permission.AD_ID" })
 @DependsOn(values = { "Adivery.aar" })
 @Events(values = {
 		"On_Error (placement As String , error As String )",

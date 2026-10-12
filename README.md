@@ -45,6 +45,29 @@ In short:
        android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
        android:exported="false" />)
    ```
+4. Let the SDK read the advertising ID. B4A doesn't merge the SDK's own manifest, and on
+   Android 13+ Google Play services returns an all-zero ID to apps that don't declare
+   `AD_ID`, so the server has nothing to target and can return no ads (the offer wall
+   needs it). Add to the Manifest Editor:
+
+   ```xml
+   AddPermission(com.google.android.gms.permission.AD_ID)
+   AddPermission(android.permission.ACCESS_NETWORK_STATE)
+   AddManifestText(
+   <queries>
+       <package android:name="com.android.vending" />
+       <package android:name="com.farsitel.bazaar" />
+       <package android:name="ir.mservices.market" />
+       <package android:name="com.huawei.hwid" />
+       <package android:name="com.huawei.hms" />
+       <package android:name="com.huawei.hwid.tv" />
+       <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="market" /></intent>
+       <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="bazaar" /></intent>
+       <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="myket" /></intent>
+       <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="http" /></intent>
+       <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="https" /></intent>
+   </queries>)
+   ```
 
 Basic usage:
 
