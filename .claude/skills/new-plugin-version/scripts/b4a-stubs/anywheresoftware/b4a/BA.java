@@ -17,6 +17,7 @@ public class BA {
 	public Context context;
 	public Activity activity;
 	public static Application applicationContext;
+	public static String packageName;
 	public static Locale cul = Locale.US;
 
 	// Returns Object in Core.jar (descriptor ...Z[Ljava/lang/Object;)Ljava/lang/Object;, as the
