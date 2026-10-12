@@ -431,8 +431,12 @@ On `chore/sdk-$TARGET`:
      existing ones. Its button is added to `main.bal` in the Designer in
      Phase 6. Until then the Sub is inert; leave a comment saying so, like the
      existing OfferWall one.
-   - Placement IDs: reuse the test placements the sibling plugins' samples
-     use for the same format. Ask the user if there are none.
+   - App and placement IDs come from the SDK's own sample:
+     `app/src/main/res/values/strings.xml` (`adivery_app_id`,
+     `adivery_<format>_pl_id`) at the `$TARGET` commit. Placements belong to
+     an app ID, so keep the whole set together. The sample's legacy
+     `com.adivery.MainActivity` holds older IDs, but the manifest doesn't
+     declare it, so don't use them. Ask the user if a format has no ID there.
    - Reflect behaviour changes in how the sample uses the API. For example,
      OfferWall prepares on tap and shows from `On_Offer_Wall_Ad_Loaded`.
    - If the POM dependencies changed, update the `#AdditionalJar` lines in
