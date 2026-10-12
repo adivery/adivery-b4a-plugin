@@ -3,6 +3,7 @@ package com.adivery.b4a;
 import android.app.Activity;
 import android.app.Application;
 import android.os.Bundle;
+import anywheresoftware.b4a.BA;
 import anywheresoftware.b4a.BA.*;
 
 @Hide
@@ -35,8 +36,9 @@ public class ActivityChangeListener implements Application.ActivityLifecycleCall
 
 	@Override
 	public void onActivityResumed(Activity activity) {
-		// The SDK's own full-screen ad activity isn't a B4A activity: keep raising events to the one below it.
-		if (activity.getClass().getName().equals("com.adivery.sdk.networks.adivery.AdActivity")) {
+		// Ad activities (Adivery's AdActivity and DeepLinkActivity, mediated networks' own) aren't B4A
+		// activities: keep raising events to the B4A activity below them. B4A activities live in the app's package.
+		if (!activity.getClass().getName().startsWith(BA.packageName + ".")) {
 			return;
 		}
 		listener.onActivityChanged(activity.getClass().getSimpleName());

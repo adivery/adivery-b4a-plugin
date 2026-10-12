@@ -23,7 +23,6 @@ public class AdiveryBannerAd extends AdiveryViewWrapper {
     
     AdiveryBannerAdView adView = new AdiveryBannerAdView(ba.activity);
     adView.setBannerSize((BannerSize) bannerSize);
-    adView.loadAd(placementId);
     adView.setBannerAdListener(new AdiveryAdListener() {
 		
 		@Override
@@ -44,5 +43,6 @@ public class AdiveryBannerAd extends AdiveryViewWrapper {
 			container.addView(adView);
 		}
 	});
+    adView.loadAd(placementId);
   }
 }
