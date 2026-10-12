@@ -1,6 +1,6 @@
 ---
 name: release-b4a-plugin
-description: Repackage the Adivery B4A plugin zip with the latest Adivery SDK .aar and publish it as a new GitHub release. Use when the user wants to cut/release a new version of the adivery-b4a-plugin after a newer Adivery Android SDK aar (sdk-X.Y.Z.aar) is available — it swaps the bundled aar inside adivery-b4a.zip, re-zips it, and creates a GitHub release on adivery/adivery-b4a-plugin with the zip attached.
+description: Repackage the Adivery B4A plugin zip with the latest Adivery SDK .aar and publish it as a new GitHub release. Use when the user wants to cut/release/publish a new version of the adivery-b4a-plugin after a newer Adivery Android SDK aar (sdk-X.Y.Z.aar) is available — it swaps the bundled aar (and, when given a rebuilt wrapper, Adivery.jar/Adivery.xml) inside adivery-b4a.zip, re-zips it, and creates a GitHub release on adivery/adivery-b4a-plugin with the zip attached. To port the wrapper to a new SDK first (new APIs/callbacks, sample, docs), use new-plugin-version.
 ---
 
 # Release the Adivery B4A plugin
@@ -14,22 +14,28 @@ the GitHub API work; your job is to gather the inputs and confirm before the
 
 ## What the script does
 
-The plugin zip has this internal layout — only the **aar** is replaced:
+The plugin zip has this internal layout — the **aar** is always replaced, the
+wrapper only when a rebuilt one is passed:
 
 ```
 adivery-b4a/Adivery.aar   <- bundled SDK binary  (SWAPPED)
-adivery-b4a/Adivery.jar   <- compiled B4A wrapper (untouched)
-adivery-b4a/Adivery.xml   <- B4A library descriptor (untouched)
+adivery-b4a/Adivery.jar   <- compiled B4A wrapper (swapped with --jar)
+adivery-b4a/Adivery.xml   <- B4A library descriptor (swapped with --xml)
 ```
 
 The release flow is failure-safe: **create draft → upload asset → publish**.
 A partial failure leaves a private draft (never a broken public release).
 It refuses to overwrite an existing tag.
 
-> Note: this is a **binary-only swap** — it does not recompile `Adivery.jar`.
-> If the new SDK added public APIs, the B4A wrapper won't expose them until
-> someone rebuilds the jar with the B4A LibraryCompiler (Windows-only, out of
-> scope). This matches existing practice for this repo.
+> Note: without `--jar`/`--xml` this is a **binary-only swap**: customers keep
+> the previously published `Adivery.jar`, so new SDK APIs and callbacks aren't
+> exposed to B4A. Syncing the wrapper with a new SDK version is the
+> **`new-plugin-version`** skill's job. It ports the Java, has the jar rebuilt
+> with B4A's LibraryCompiler on Windows, verifies the result, and hands over the
+> rebuilt `Adivery.jar` + `Adivery.xml` for `--jar`/`--xml`. If it was skipped,
+> its `bridge.py jar` check (in
+> `.claude/skills/new-plugin-version/scripts/`) at least confirms the published
+> jar still links against the new aar.
 
 ## Steps
 
@@ -73,7 +79,11 @@ It refuses to overwrite an existing tag.
    > **Caveat**: this reads whatever commit the SDK repo is *currently*
    > checked out to — make sure that's the same commit/tag that produced the
    > `sdk-*.aar` you're packaging this release, or check out the right tag
-   > first.
+   > first. Better: pass the release's published POM with `--pom`
+   > (`https://repo1.maven.org/maven2/com/adivery/sdk/X.Y.Z/sdk-X.Y.Z.pom`,
+   > downloaded first), which can't drift, and also lists POM dependencies the
+   > table doesn't cover. `--sample sample/ui_example.b4a --sample README.md`
+   > also checks the `#AdditionalJar` lines of the sample and the README.
 
    If it reports a mismatch, update the version table and `#AdditionalJar`
    lines in `b4a.md` before continuing — or explicitly decide with the user
@@ -101,7 +111,8 @@ It refuses to overwrite an existing tag.
    ```
 
    Add flags as needed: `--aar`, `--zip`, `--search-dir`, `--out`, `--notes`,
-   `--repo`, or `--build-only` (repackage without releasing — good for a dry run).
+   `--repo`, `--jar` + `--xml` (a rebuilt wrapper, always together), or
+   `--build-only` (repackage without releasing — good for a dry run).
 
 6. **Report the result.** On success the script prints `RELEASE_URL=…`; share
    it. The repackaged zip is written under the skill's `build/` directory.

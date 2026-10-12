@@ -7,8 +7,12 @@
 #
 # The plugin zip has this internal layout:
 #   adivery-b4a/Adivery.aar   <- the bundled SDK binary (this is what we swap)
-#   adivery-b4a/Adivery.jar   <- the compiled B4A wrapper (untouched)
-#   adivery-b4a/Adivery.xml   <- the B4A library descriptor (untouched)
+#   adivery-b4a/Adivery.jar   <- the compiled B4A wrapper (swapped only with --jar)
+#   adivery-b4a/Adivery.xml   <- the B4A library descriptor (swapped only with --xml)
+#
+# --jar/--xml take a wrapper rebuilt by B4A's LibraryCompiler (see the
+# new-plugin-version skill). They come as a pair: the xml is what the B4A
+# IDE compiles customers' code against, the jar is what runs.
 #
 # The release flow is failure-safe: create as draft -> upload asset ->
 # publish. Any partial failure leaves a private draft to delete/retry,
@@ -24,7 +28,11 @@ SEARCH_DIR="${HOME}/Downloads"
 ASSET_NAME="adivery-b4a.zip"   # release asset name (unversioned, per convention)
 INNER_DIR="adivery-b4a"        # top-level folder inside the zip
 INNER_AAR="Adivery.aar"        # the aar entry to replace, inside INNER_DIR/
+INNER_JAR="Adivery.jar"
+INNER_XML="Adivery.xml"
 AAR=""
+JAR=""
+XML=""
 ZIP=""
 VERSION=""
 OUT=""
@@ -39,6 +47,8 @@ Options:
   --version X.Y.Z   Release version (a leading "v" is accepted/normalized).
   --aar PATH        New Adivery SDK aar. Default: newest sdk-*.aar in --search-dir.
   --zip PATH        Base plugin zip to repackage. Default: <search-dir>/adivery-b4a.zip.
+  --jar PATH        Rebuilt B4A wrapper Adivery.jar to swap in (needs --xml).
+  --xml PATH        Rebuilt B4A library descriptor Adivery.xml to swap in (needs --jar).
   --search-dir DIR  Where to auto-detect aar/zip. Default: ~/Downloads.
   --out PATH        Output zip path. Default: <scratch>/adivery-b4a.zip next to script.
   --notes TEXT      Release body. Default: "Update plugin based on Adivery X.Y.Z version".
@@ -59,6 +69,8 @@ while [ $# -gt 0 ]; do
     --version)    VERSION="${2:-}"; shift 2 ;;
     --aar)        AAR="${2:-}"; shift 2 ;;
     --zip)        ZIP="${2:-}"; shift 2 ;;
+    --jar)        JAR="${2:-}"; shift 2 ;;
+    --xml)        XML="${2:-}"; shift 2 ;;
     --search-dir) SEARCH_DIR="${2:-}"; shift 2 ;;
     --out)        OUT="${2:-}"; shift 2 ;;
     --notes)      NOTES="${2:-}"; shift 2 ;;
@@ -102,6 +114,15 @@ if [ -z "$ZIP" ]; then
 fi
 [ -f "$ZIP" ] || err "plugin zip not found: $ZIP (pass --zip)"
 
+# ---------------------------------------------------------------- wrapper -----
+if [ -n "$JAR" ] || [ -n "$XML" ]; then
+  [ -n "$JAR" ] && [ -n "$XML" ] || err "--jar and --xml go together (LibraryCompiler writes both)"
+  [ -f "$JAR" ] || err "jar not found: $JAR"
+  [ -f "$XML" ] || err "xml not found: $XML"
+  unzip -tqq "$JAR" >/dev/null 2>&1 || err "jar is not a valid archive: $JAR"
+  grep -q '<root>' "$XML" || err "not a B4A library descriptor (no <root>): $XML"
+fi
+
 # ---------------------------------------------------------------- output path -
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [ -z "$OUT" ]; then
@@ -111,6 +132,7 @@ mkdir -p "$(dirname "$OUT")"
 
 echo "==> aar     : $AAR"
 echo "==> base zip: $ZIP"
+[ -n "$JAR" ] && echo "==> jar     : $JAR" && echo "==> xml     : $XML"
 echo "==> output  : $OUT"
 echo "==> version : $VERSION (tag $TAG)"
 
@@ -126,6 +148,18 @@ old_size="$(wc -c < "$target")"
 cp -f "$AAR" "$target"
 new_size="$(wc -c < "$target")"
 echo "==> swapped ${INNER_DIR}/${INNER_AAR}: ${old_size} bytes -> ${new_size} bytes"
+
+swap_entry() {  # swap_entry SRC ENTRY
+  local dst="${WORK}/${INNER_DIR}/$2" before
+  [ -f "$dst" ] || err "expected '$INNER_DIR/$2' inside $ZIP but it was not found"
+  before="$(wc -c < "$dst")"
+  cp -f "$1" "$dst"
+  echo "==> swapped ${INNER_DIR}/$2: ${before} bytes -> $(wc -c < "$dst") bytes"
+}
+if [ -n "$JAR" ]; then
+  swap_entry "$JAR" "$INNER_JAR"
+  swap_entry "$XML" "$INNER_XML"
+fi
 
 rm -f "$OUT"
 ( cd "$WORK" && zip -q -r -X "$OUT" "$INNER_DIR" )

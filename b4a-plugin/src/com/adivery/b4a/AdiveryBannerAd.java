@@ -8,7 +8,7 @@ import com.adivery.sdk.AdiveryAdListener;
 import com.adivery.sdk.BannerSize;
 
 @ShortName("AdiveryBannerAd")
-@Events(values = { "AdLoaded", "AdClicked", "AdLoadFailed", "AdShowFailed" })
+@Events(values = { "Ad_Loaded", "Ad_Clicked", "Ad_Error (error As String)" })
 @ActivityObject
 public class AdiveryBannerAd extends AdiveryViewWrapper {
 
@@ -23,18 +23,17 @@ public class AdiveryBannerAd extends AdiveryViewWrapper {
     
     AdiveryBannerAdView adView = new AdiveryBannerAdView(ba.activity);
     adView.setBannerSize((BannerSize) bannerSize);
-    adView.loadAd(placementId);
     adView.setBannerAdListener(new AdiveryAdListener() {
 		
 		@Override
 		public void onError(String reason) {
-			raiseEvent(ba, "on_error", reason);
+			raiseEvent(ba, "ad_error", reason);
 			
 		}
 		
 		@Override
 		public void onAdClicked() {
-			raiseEvent(ba, "on_click");
+			raiseEvent(ba, "ad_clicked");
 			
 		}
 		
@@ -44,5 +43,6 @@ public class AdiveryBannerAd extends AdiveryViewWrapper {
 			container.addView(adView);
 		}
 	});
+    adView.loadAd(placementId);
   }
 }

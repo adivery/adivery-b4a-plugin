@@ -4,7 +4,7 @@ FileGroup1=Default Group
 Group=Default Group
 Library1=core
 Library2=adivery
-ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="36"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.DarkTheme)~\n~'End of default text.~\n~~\n~'Fix: MissingForegroundServiceTypeException on targetSdkVersion 34+ (Starter service auto-foreground edge case)~\n~SetServiceAttribute(Starter, android:foregroundServiceType, shortService)~\n~~\n~'Adivery Ad activity~\n~AddApplicationText(~\n~<activity~\n~    android:name="com.adivery.sdk.networks.adivery.AdActivity"~\n~    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"~\n~    android:exported="false" />)~\n~~\n~'Adivery AdMob config~\n~AddApplicationText(~\n~<meta-data android:name="com.google.android.gms.ads.AD_MANAGER_APP" android:value="true" />~\n~~\n~<activity~\n~    android:name="com.google.android.gms.ads.AdActivity"~\n~    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"~\n~    android:theme="@android:style/Theme.Translucent" />)~\n~	~\n~AddApplicationText(~\n~<activity~\n~    android:name="com.adivery.sdk.networks.adivery.AdActivity"~\n~    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"~\n~    android:exported="false" />~\n~<service~\n~    android:name="com.adivery.data.location.LocationJobService"~\n~    android:exported="false"~\n~    android:permission="android.permission.BIND_JOB_SERVICE" />)~\n~
+ManifestCode='This code will be applied to the manifest file during compilation.~\n~'You do not need to modify it in most cases.~\n~'See this link for for more information: https://www.b4x.com/forum/showthread.php?p=78136~\n~AddManifestText(~\n~<uses-sdk android:minSdkVersion="21" android:targetSdkVersion="36"/>~\n~<supports-screens android:largeScreens="true" ~\n~    android:normalScreens="true" ~\n~    android:smallScreens="true" ~\n~    android:anyDensity="true"/>)~\n~SetApplicationAttribute(android:icon, "@drawable/icon")~\n~SetApplicationAttribute(android:label, "$LABEL$")~\n~CreateResourceFromFile(Macro, Themes.DarkTheme)~\n~'End of default text.~\n~~\n~'Adivery: on Android 13+ Google Play services returns an all-zero advertising ID unless the~\n~'app declares AD_ID. B4A doesn't merge the SDK's own manifest, so declare it (and the SDK's queries) here.~\n~AddPermission(com.google.android.gms.permission.AD_ID)~\n~AddPermission(android.permission.ACCESS_NETWORK_STATE)~\n~AddManifestText(~\n~<queries>~\n~    <package android:name="com.android.vending" />~\n~    <package android:name="com.farsitel.bazaar" />~\n~    <package android:name="ir.mservices.market" />~\n~    <package android:name="com.huawei.hwid" />~\n~    <package android:name="com.huawei.hms" />~\n~    <package android:name="com.huawei.hwid.tv" />~\n~    <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="market" /></intent>~\n~    <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="bazaar" /></intent>~\n~    <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="myket" /></intent>~\n~    <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="http" /></intent>~\n~    <intent><action android:name="android.intent.action.VIEW" /><data android:scheme="https" /></intent>~\n~</queries>)~\n~~\n~'Fix: MissingForegroundServiceTypeException on targetSdkVersion 34+ (Starter service auto-foreground edge case)~\n~SetServiceAttribute(Starter, android:foregroundServiceType, shortService)~\n~~\n~'Adivery Ad activity~\n~AddApplicationText(~\n~<activity~\n~    android:name="com.adivery.sdk.networks.adivery.AdActivity"~\n~    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"~\n~    android:exported="false" />)~\n~~\n~'Adivery AdMob config~\n~AddApplicationText(~\n~<meta-data android:name="com.google.android.gms.ads.AD_MANAGER_APP" android:value="true" />~\n~~\n~<activity~\n~    android:name="com.google.android.gms.ads.AdActivity"~\n~    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"~\n~    android:theme="@android:style/Theme.Translucent" />)~\n~	~\n~AddApplicationText(~\n~<activity~\n~    android:name="com.adivery.sdk.networks.adivery.AdActivity"~\n~    android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"~\n~    android:exported="false" />)~\n~
 Module1=Starter
 NumberOfFiles=1
 NumberOfLibraries=2
@@ -22,6 +22,8 @@ Version=13.5
 	 #AdditionalJar: okhttp-4.12.0
 	 #AdditionalJar: okio-jvm-3.6.0
 	 #AdditionalJar: sentry-8.7.0
+	 #AdditionalJar: kotlinx-coroutines-core-jvm-1.10.1
+	 #AdditionalJar: kotlinx-coroutines-android-1.10.1
 	 #SignKeyAlgorithm: -digestalg SHA1 -sigalg SHA384withRSA
 	#MultiDex: False
 #End Region
@@ -33,6 +35,8 @@ Version=13.5
 	#AdditionalJar: okhttp-4.12.0
 	#AdditionalJar: okio-jvm-3.6.0
 	#AdditionalJar: sentry-8.7.0
+	#AdditionalJar: kotlinx-coroutines-core-jvm-1.10.1
+	#AdditionalJar: kotlinx-coroutines-android-1.10.1
 #End Region
 
 Sub Process_Globals
@@ -51,8 +55,8 @@ End Sub
 Sub Activity_Create(FirstTime As Boolean)
 	'Do not forget to load the layout file created with the visual designer. For example:
 	Activity.LoadLayout("main")
-	adivery.Initialize("7e27fb38-5aff-473a-998f-437b89426f66")
-	adivery.AddListener(Me)
+	adivery.Initialize("738c5e66-2e4f-4ff0-8118-ef6c8235a5e9")
+	adivery.SetUserId("test")
 	adivery.SetLoggingEnabled(True)
 	
 End Sub
@@ -68,7 +72,7 @@ End Sub
 
 Sub ButtonBanner_Click
 
-	banner.Initialize2("mainbanner", "2f71ec44-f30a-4043-9cc1-f32347a07f8b", banner.BANNER)
+	banner.Initialize2("mainbanner", "06f0c520-3cc8-45c0-bbf1-f866f7eac525", banner.BANNER)
 	
 	Dim Width, Height, Left, Top As Int
 
@@ -83,57 +87,63 @@ Sub ButtonBanner_Click
 End Sub
 
 Sub ButtonSmart_Click
-	banner.Initialize2("smartbanner", "46a57d90-dc31-4995-9cad-defc8dcd776e", banner.SMART_BANNER)
+	banner.Initialize2("smartbanner", "06f0c520-3cc8-45c0-bbf1-f866f7eac525", banner.SMART_BANNER)
 	Activity.AddView(banner, 0, 100%y - 100dip, 100%x, 100dip)
-	Log("flex banner initialized")
+	Log("smart banner initialized")
 End Sub
 
-Sub FlexBanner_AdLoadFailed
-	Log("flex banner load failed")
+Sub SmartBanner_Ad_Error(error As String)
+	Log("smart banner load failed: " & error)
 End Sub
 
 Sub ButtonInterstitial_Click
-	adivery.PrepareInterstitialAd("de5db046-765d-478f-bb2e-30dc2eaf3f51")
+	adivery.PrepareInterstitialAd("0d76f239-446e-4ceb-87b2-e336993ff7ec")
 	Log("interstitial called")
 End Sub
 
 Sub ButtonInterstitialShow_Click
-	adivery.Show("de5db046-765d-478f-bb2e-30dc2eaf3f51")
+	adivery.Show("0d76f239-446e-4ceb-87b2-e336993ff7ec")
 	Log("interstitial called")
 End Sub
 
 Sub ButtonRewarded_Click
-	adivery.PrepareRewardedAd("3f97dc4d-3e09-4024-acaf-931862c03ba8")
+	adivery.PrepareRewardedAd("5edf8226-23cd-41a2-83c7-4ecfb6b87ea1")
 	Log("rewarded called")
 End Sub
 
 Sub ButtonRewardedShow_Click
-	adivery.Show("3f97dc4d-3e09-4024-acaf-931862c03ba8")
+	adivery.Show("5edf8226-23cd-41a2-83c7-4ecfb6b87ea1")
 	Log("rewarded called")
 End Sub
 
 Sub ButtonAppOpen_Click
-	adivery.PrepareAppOpenAd("9e9dd375-a1fe-4c2b-8432-b5bf8a5095f6")
+	adivery.PrepareAppOpenAd("c0b3bf0e-75a5-4183-ad86-2cc5c07c07d6")
 End Sub
 
 Sub ButtonAppOpenShow_Click
-	adivery.Show("9e9dd375-a1fe-4c2b-8432-b5bf8a5095f6")
+	adivery.ShowAppOpen("c0b3bf0e-75a5-4183-ad86-2cc5c07c07d6")
 End Sub
 
-Sub MainBanner_AdLoaded
+'NOTE: no "ButtonOfferWall" exists yet in this layout (main.bal, a binary Designer file
+'that can't be hand-edited safely). Add it via the B4A visual Designer - this Sub will
+'bind automatically once a button with that name exists.
+'The Offer Wall isn't loaded again after it closes: prepare it on every tap, and show it
+'from On_Offer_Wall_Ad_Loaded.
+Sub ButtonOfferWall_Click
+	adivery.PrepareOfferWallAd("9cad440a-8271-49d2-8f81-0819268a5ce4")
+	Log("offerwall called")
+End Sub
+
+Sub MainBanner_Ad_Loaded
 	Log("banner ad loaded")
 End Sub
 
-Sub MainBanner_AdClicked
+Sub MainBanner_Ad_Clicked
 	Log("banner ad clicked")
 End Sub
 
-Sub MainBanner_AdLoadFailed
-	Log("banner ad load failed")
-End Sub
-
-Sub MainBanner_AdShowFailed
-	Log("banner ad show failed")
+Sub MainBanner_Ad_Error(error As String)
+	Log("banner ad load failed: " & error)
 End Sub
 
 Sub On_Error(placement As String, error As String)
@@ -170,4 +180,41 @@ End Sub
 
 Sub On_Rewarded_Ad_Shown(placement As String)
 	Log("Rewarded Ad Shown: " & placement)
+End Sub
+
+Sub On_App_Open_Ad_Clicked(placement As String)
+	Log("App Open Ad Clicked: " & placement)
+End Sub
+
+Sub On_App_Open_Ad_Closed(placement As String)
+	Log("App Open Ad Closed: " & placement)
+End Sub
+
+Sub On_App_Open_Ad_Loaded(placement As String)
+	Log("App Open Ad Loaded: " & placement)
+End Sub
+
+Sub On_App_Open_Ad_Shown(placement As String)
+	Log("App Open Ad Shown: " & placement)
+End Sub
+
+Sub On_Offer_Wall_Ad_Clicked(placement As String)
+	Log("Offer Wall Ad Clicked: " & placement)
+End Sub
+
+Sub On_Offer_Wall_Ad_Closed(placement As String)
+	Log("Offer Wall Ad Closed: " & placement)
+End Sub
+
+Sub On_Offer_Wall_Ad_Loaded(placement As String)
+	Log("Offer Wall Ad Loaded: " & placement)
+	adivery.Show(placement)
+End Sub
+
+Sub On_Offer_Wall_Ad_Shown(placement As String)
+	Log("Offer Wall Ad Shown: " & placement)
+End Sub
+
+Sub On_Offer_Wall_Mission_Rewarded(placement As String, currency As String, amount As Int)
+	Log("Offer Wall Mission Rewarded: " & placement & ", " & amount & " " & currency)
 End Sub
