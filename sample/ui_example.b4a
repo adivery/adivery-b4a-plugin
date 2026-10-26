@@ -97,22 +97,22 @@ Sub SmartBanner_Ad_Error(error As String)
 End Sub
 
 Sub ButtonInterstitial_Click
-	adivery.PrepareInterstitialAd("0d76f239-446e-4ceb-87b2-e336993ff7ec")
+	adivery.PrepareInterstitialAd("5788d25b-b7d6-442c-a562-b4bef582c18c")
 	Log("interstitial called")
 End Sub
 
 Sub ButtonInterstitialShow_Click
-	adivery.Show("0d76f239-446e-4ceb-87b2-e336993ff7ec")
+	adivery.Show("5788d25b-b7d6-442c-a562-b4bef582c18c")
 	Log("interstitial called")
 End Sub
 
 Sub ButtonRewarded_Click
-	adivery.PrepareRewardedAd("5edf8226-23cd-41a2-83c7-4ecfb6b87ea1")
+	adivery.PrepareRewardedAd("29f509a9-3826-4ada-8404-4735aa14b510")
 	Log("rewarded called")
 End Sub
 
 Sub ButtonRewardedShow_Click
-	adivery.Show("5edf8226-23cd-41a2-83c7-4ecfb6b87ea1")
+	adivery.Show("29f509a9-3826-4ada-8404-4735aa14b510")
 	Log("rewarded called")
 End Sub
 
