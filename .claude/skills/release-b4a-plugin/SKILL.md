@@ -1,6 +1,6 @@
 ---
 name: release-b4a-plugin
-description: Repackage the Adivery B4A plugin zip with the latest Adivery SDK .aar and publish it as a new GitHub release. Use when the user wants to cut/release/publish a new version of the adivery-b4a-plugin after a newer Adivery Android SDK aar (sdk-X.Y.Z.aar) is available — it swaps the bundled aar (and, when given a rebuilt wrapper, Adivery.jar/Adivery.xml) inside adivery-b4a.zip, re-zips it, and creates a GitHub release on adivery/adivery-b4a-plugin with the zip attached. To port the wrapper to a new SDK first (new APIs/callbacks, sample, docs), use new-plugin-version.
+description: Repackage the Adivery B4A plugin zip with the latest Adivery SDK .aar and publish it as a new GitHub release. Use when the user wants to cut/release/publish a new version of the adivery-b4a-plugin after a newer Adivery Android SDK aar (sdk-X.Y.Z.aar) is available — it swaps the bundled aar (and, when given a rebuilt wrapper, Adivery.jar/Adivery.xml) inside adivery-b4a.zip, re-zips it, has the user test it on a real device, and creates a GitHub release on adivery/adivery-b4a-plugin with the zip attached. To port the wrapper to a new SDK first (new APIs/callbacks, sample, docs), use new-plugin-version.
 ---
 
 # Release the Adivery B4A plugin
@@ -95,16 +95,41 @@ It refuses to overwrite an existing tag.
    [ -n "$GITHUB_TOKEN" ] && echo present || echo MISSING
    ```
 
-   - If **present**, just run the script normally (step 5).
+   - If **present**, just run the script normally (steps 5 and 6).
    - If **MISSING**, ask the user for a token (needs `repo` / `contents:write`
      scope). Shell env does **not** persist across separate Bash calls, so pass
      it inline on the *same* command as the script:
      `GITHUB_TOKEN='ghp_xxx' bash .claude/skills/release-b4a-plugin/package-and-release.sh ...`
      Never write the token to a file, never echo it, never commit it.
 
-5. **Confirm, then run.** Show the user the resolved aar, zip, version,
-   target repo, and the docs-drift result, and get a go-ahead (publishing is
-   public and hard to undo). Then run from the repo root:
+5. **Test on a real device (mandatory gate).** Repackage without
+   releasing:
+
+   ```bash
+   bash .claude/skills/release-b4a-plugin/package-and-release.sh --version <X.Y.Z> --build-only
+   ```
+
+   B4A runs only on Windows, so hand the user this checklist and wait:
+   1. Copy the three files from the repackaged zip's `adivery-b4a/` folder
+      (the zip is under the skill's `build/` directory) into B4A's
+      Additional Libraries folder, replacing `Adivery.aar`, `Adivery.jar`
+      and `Adivery.xml`.
+   2. Open `sample/ui_example.b4a` and run it on a real device, not an
+      emulator.
+   3. Tap through each format, and check B4A's Logs tab
+      for the sample's `Log` lines: loaded, shown, clicked, closed,
+      rewarded, and `On_Error`.
+
+   If the phone is also connected here, watch for crashes while they test:
+   `adb logcat -c` before, then `adb logcat -d -b crash`, which must be
+   empty. **Wait for the user's explicit "it works, continue"** before step
+   6, and publish exactly the inputs they tested. If there's no real device,
+   STOP; never skip this gate.
+
+6. **Confirm, then run.** Show the user the resolved aar, zip, version,
+   target repo, the docs-drift result and the device-test result, and get a
+   go-ahead (publishing is public and hard to undo). Then run from the repo
+   root:
 
    ```bash
    bash .claude/skills/release-b4a-plugin/package-and-release.sh --version <X.Y.Z>
@@ -114,7 +139,7 @@ It refuses to overwrite an existing tag.
    `--repo`, `--jar` + `--xml` (a rebuilt wrapper, always together), or
    `--build-only` (repackage without releasing — good for a dry run).
 
-6. **Report the result.** On success the script prints `RELEASE_URL=…`; share
+7. **Report the result.** On success the script prints `RELEASE_URL=…`; share
    it. The repackaged zip is written under the skill's `build/` directory.
    If step 3 found drift and it wasn't fixed yet, remind the user it's still
    outstanding.
